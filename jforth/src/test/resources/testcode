@@ -1,0 +1,124 @@
+cr
+"Loading Test Code" . cr
+"TEST CODE EXECUTION STARTED" . cr cr
+
+( Do loop with positive 1 loop increment ) 
+: dl1 10 0 do i . loop ;
+
+" do loop with positive 1 loop increment: " . dl1 cr
+ 
+( Do loop with negative 1 loop increment ) 
+: dl2 0 10 do i . -1 +loop ;
+
+" do loop with negative 1 loop increment: " . dl2 cr
+
+( Do loop with negative 2 loop increment ) 
+: dl3 0 10 do i . -2 +loop ;
+
+" do loop with negative 2 loop increment: " . dl3 cr
+
+( Test of nested do loops )
+: dl4 0 10 do 5 0 do "j=" . j . "i=" . i . 1 +loop -2 +loop ;
+
+" nested do loops: " . dl4 cr
+
+( Test of mod function )
+: dl5 10 0 do "i=" . i . " mod=" . i 2 mod . " " . loop ;
+
+" test of mod function: " . dl5 cr
+
+( Test of if else then conditionals )
+: dl6 10 0 do i 2 mod 0= if "even =" . i . else "odd =" . i . then loop ;
+
+" test of if else then conditionals: " . dl6 cr
+
+( Test of bounded random function. bound --- )
+: randomtest 25 0 do dup random . loop drop ;
+
+" test of bounded random function: " . 100 randomtest cr
+
+( Constant for size of numbers array )
+25 constant numeric_array_size
+
+( Declare an array of size numeric_array_size )
+numeric_array_size array numbers
+
+( fill word fills the numbers array with random numbers )
+: fill numeric_array_size 0 do 1000 random i numbers ! loop ;
+
+" filling numeric array with 100 random numbers" . fill cr
+
+( show word displays the numbers in the array )
+: show numeric_array_size 0 do i numbers @ . " " . loop ;
+
+" pre-sort content of numeric array: " . show cr
+
+variable excflag ( exchange flag - set false if exchange of numbers is made )
+variable index ( array index of current numbers being manipulated )
+
+( Bubble Sort Word )
+: bbl-sort
+	begin
+		true excflag !
+		0 index !
+		begin
+			index @ numbers @
+			index @ 1+ numbers @
+			>
+			if
+				index @ dup numbers @
+				index @ 1+ dup numbers @
+				rot rot numbers !
+				swap numbers !
+				false excflag !
+			then
+			1 index +!
+			index @ numeric_array_size 1- < not
+		end
+		excflag @ true =
+	end
+;
+
+" bubble sorting the numeric array ..." . bbl-sort cr
+" post-sort content of numeric array: " . show cr
+
+( Constant for size of string array )
+5 constant string_array_size
+
+( Declare an array of size string_array_size )
+string_array_size array strings
+
+( Load the array with string values )
+"ab" 0 strings ! "cd" 1 strings ! "ef" 2 strings ! "gh" 3 strings ! "if" 4 strings !
+
+" loading string array with 5 strings" . cr
+
+( show_strings word displays the strings in the string array )
+: show_strings string_array_size 0 do i strings @ . " " . loop ;
+
+" content of string array: " . show_strings cr
+
+( To do indirect recursion a placeholder for a word address is needed )
+variable placeHolder
+
+( Computes factorial of number on stack n --- n! )
+: factorial
+	dup 1 >
+	if
+		( n is greater than one so recurse ) 
+		dup 1- placeHolder @ execute
+	else
+		( n is equal to one )
+		1
+	then
+	( multiply values found on stack ) * 
+;
+
+( Store the word address of the factorial function into placeHolder )
+' factorial placeHolder !
+
+" defining the recursive factorial function" . cr
+" value of 10 factorial: " . 10 factorial . cr
+
+cr 
+"TEST CODE EXECUTION COMPLETED" . cr
